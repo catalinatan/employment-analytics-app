@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Predict Employment Analytics{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #fff !important;
+        min-height: 100vh;
+    }
+    .prediction-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(66,146,195,0.10);
+        padding: 2.5rem 2rem 2rem 2rem;
+        margin: 2rem auto 2rem auto;
+        max-width: 900px;
+    }
+    .prediction-header {
+        color: #2E6DA4;
+        font-weight: 800;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+    .prediction-desc {
+        color: #357AB7;
+        font-size: 1.08rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+    .custom-btn {
+        background: #4292C3;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 10px 26px;
+        font-size: 1.05rem;
+        box-shadow: 0 2px 8px rgba(66,146,195,0.10);
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.12s;
+        margin-top: 10px;
+    }
+    .custom-btn:hover {
+        background: #357AB7;
+        color: #FAF9F6;
+        box-shadow: 0 6px 18px rgba(53,122,183,0.16);
+        transform: translateY(-2px) scale(1.03);
+    }
+    .custom-btn:active {
+        background: #2E6DA4;
+        color: #FAF9F6;
+        box-shadow: 0 2px 8px rgba(46,109,164,0.12);
+        transform: scale(0.98);
+    }
+    .form-label {
+        color: #357AB7;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+    }
+    .form-control, select {
+        border-radius: 8px;
+        border: 1px solid #4292C3;
+        padding: 8px 12px;
+        margin-bottom: 1rem;
+    }
+    .error {
+        color: #d9534f;
+        font-size: 0.97rem;
+        margin-left: 6px;
+    }
+    .prediction-table {
+        white-space: pre-wrap;
+        font-family: monospace;
+        background-color: #f8fafc;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid #dee2e6;
+        margin-top: 1rem;
+    }
+    .prediction-results-card {
+        background: #f8fafc;
+        border-radius: 14px;
+        box-shadow: 0 2px 12px rgba(66,146,195,0.08);
+        padding: 1.5rem 1.2rem;
+        margin-top: 2rem;
+        margin-bottom: 1.5rem;
+    }
+    @media (max-width: 900px) {
+        .prediction-card { padding: 1.2rem 0.5rem; }
+    }
+</style>
+<div class="prediction-card">
+    <h1 class="prediction-header">Employment Prediction</h1>
+    <p class="prediction-desc">Forecast employment trends and visualize future workforce analytics.</p>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                    {% endfor %}
+            {% endif %}
+    {% endwith %}
+
+    <form method="post" action="/predict_employment_trends">
+        {{ form.hidden_tag() }}
+        <div class="row">
+            <div class="col-md-6">
+                <div class="mb-3">
+                    {{ form.region.label(class_='form-label') }}
+                    {{ form.region(class_='form-control') }}
+                    {% if form.region.errors %}
+                        <span class="error">{{ form.region.errors[0] }}</span>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.no_of_years.label(class_='form-label') }}
+                    {{ form.no_of_years(class_='form-control') }}
+                    {% if form.no_of_years.errors %}
+                        <span class="error">{{ form.no_of_years.errors[0] }}</span>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.occupation_type.label(class_='form-label') }}
+                    {{ form.occupation_type(class_='form-control') }}
+                    {% if form.occupation_type.errors %}
+                        <span class="error">{{ form.occupation_type.errors[0] }}</span>
+                    {% endif %}
+                </div>
+                <div class="mb-3">
+                    {{ form.additional_info.label(class_='form-label') }}
+                    {{ form.additional_info(class_='form-control') }}
+                </div>
+                <button type="submit" class="custom-btn">{{ form.submit.label }}</button>
+            </div>
+        </div>
+    </form>
+
+    {% if prediction_result %}
+        <div class="prediction-results-card">
+            <h2 class="prediction-header" style="font-size:1.3rem; margin-bottom:1rem;">Prediction Results</h2>
+            <div class="prediction-table">
+                {{ prediction_result | safe}}
+            </div>
+        </div>
+        <div class="prediction-results-card">
+            <h2 class="prediction-header" style="font-size:1.2rem; margin-bottom:1rem;">Employment Data Visualisation</h2>
+            <div>{{ graph_html|safe }}</div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

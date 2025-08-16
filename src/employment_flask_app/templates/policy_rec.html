@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Policy Recommendation{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #fff !important;
+        min-height: 100vh;
+    }
+    .rec-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(66,146,195,0.10);
+        padding: 2.5rem 2rem 2rem 2rem;
+        margin: 3rem auto 2rem auto;
+        max-width: 600px;
+    }
+    .rec-header {
+        color: #2E6DA4;
+        font-weight: 800;
+        margin-bottom: 1.2rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+    .form-label {
+        color: #357AB7;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        display: block;
+        text-align: left;
+    }
+    .form-control, select {
+        border-radius: 8px;
+        border: 1px solid #4292C3;
+        padding: 8px 12px;
+        margin-bottom: 1.2rem;
+        font-size: 1.05rem;
+    }
+    .custom-btn {
+        background: #4292C3;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 10px 26px;
+        font-size: 1.05rem;
+        box-shadow: 0 2px 8px rgba(66,146,195,0.10);
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.12s;
+        margin-top: 10px;
+        width: 100%;
+    }
+    .custom-btn:hover {
+        background: #357AB7;
+        color: #FAF9F6;
+        box-shadow: 0 6px 18px rgba(53,122,183,0.16);
+        transform: translateY(-2px) scale(1.03);
+    }
+    .custom-btn:active {
+        background: #2E6DA4;
+        color: #FAF9F6;
+        box-shadow: 0 2px 8px rgba(46,109,164,0.12);
+        transform: scale(0.98);
+    }
+    .rec-section-title {
+        color: #357AB7;
+        font-weight: 700;
+        margin-top: 2.2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        font-size: 1.2rem;
+    }
+</style>
+<div class="rec-card">
+    <h1 class="rec-header">Policy Recommendation</h1>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}" role="alert">
+                                    <p>{{ message }}</p>
+                            </div>
+                    {% endfor %}
+            {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('starter.policy_recommendation') }}">
+        {{ recommendation_form.hidden_tag() }}
+        <div class="mb-3">
+            {{ recommendation_form.employment_disparity_field.label(class_='form-label') }}
+            {{ recommendation_form.employment_disparity_field(class_='form-control', id='employment-disparity-field') }}
+        </div>
+        <div class="mb-3">
+            {{ recommendation_form.policy_name_field.label(class_='form-label') }}
+            {{ recommendation_form.policy_name_field(class_='form-control', id='policy-name-field') }}
+        </div>
+        <div class="mb-3">
+            {{ recommendation_form.policy_description_field.label(class_='form-label') }}
+            {{ recommendation_form.policy_description_field(class_='form-control', id='policy-description-field') }}
+        </div>
+        <button type="submit" class="custom-btn" id="submit-recommendation">Submit Recommendation</button>
+        <div class="rec-section-title">Past Policies</div>
+        <div class="mb-3">
+            {{ recommendation_form.policy_id.label(class_='form-label') }}
+            {{ recommendation_form.policy_id(class_='form-control', id='policy_id') }}
+        </div>
+        <div class="mb-3">
+            <label for="employment_disparity" class="form-label">Employment Disparity</label>
+            <textarea id="employment_disparity" class="form-control" readonly rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="policy_description" class="form-label">Policy Description</label>
+            <textarea id="policy_description" class="form-control" readonly rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="policy_feedback" class="form-label">Policy Feedback</label>
+            <textarea id="policy_feedback" class="form-control" readonly rows="4"></textarea>
+        </div>
+    </form>
+</div>
+<script>
+        const policyDescriptions = JSON.parse('{{ recommendation_form.policy_descriptions|tojson|safe }}');
+        const policyFeedbacks = JSON.parse('{{ recommendation_form.policy_feedback|tojson|safe }}');
+        const employmentDisparity = JSON.parse('{{ recommendation_form.employment_disparity|tojson|safe }}');
+
+        const policySelect = document.getElementById("policy_id");
+        const descriptionField = document.getElementById("policy_description");
+        const feedbackField = document.getElementById("policy_feedback");
+        const disparityField = document.getElementById("employment_disparity");
+
+        policySelect.addEventListener("change", function () {
+                const selectedPolicyId = parseInt(this.value);
+                descriptionField.value = policyDescriptions[selectedPolicyId] || "No description available.";
+                feedbackField.value = policyFeedbacks[selectedPolicyId] || "No feedback available.";
+                disparityField.value = employmentDisparity[selectedPolicyId] || "No employment disparity data available.";
+        });
+
+        // Trigger change event on page load to populate initial values
+        policySelect.dispatchEvent(new Event("change"));
+</script>
+{% endblock %}

@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Policy Feedback{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        background: #fff !important;
+        min-height: 100vh;
+    }
+    .feedback-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(66,146,195,0.10);
+        padding: 2.5rem 2rem 2rem 2rem;
+        margin: 3rem auto 2rem auto;
+        max-width: 500px;
+    }
+    .feedback-header {
+        color: #2E6DA4;
+        font-weight: 800;
+        margin-bottom: 1.2rem;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+    .form-label {
+        color: #357AB7;
+        font-weight: 600;
+        margin-bottom: 0.2rem;
+        display: block;
+        text-align: left;
+    }
+    .form-control, select {
+        border-radius: 8px;
+        border: 1px solid #4292C3;
+        padding: 8px 12px;
+        margin-bottom: 1.2rem;
+        font-size: 1.05rem;
+    }
+    .custom-btn {
+        background: #4292C3;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        padding: 10px 26px;
+        font-size: 1.05rem;
+        box-shadow: 0 2px 8px rgba(66,146,195,0.10);
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.12s;
+        margin-top: 10px;
+        width: 100%;
+    }
+    .custom-btn:hover {
+        background: #357AB7;
+        color: #FAF9F6;
+        box-shadow: 0 6px 18px rgba(53,122,183,0.16);
+        transform: translateY(-2px) scale(1.03);
+    }
+    .custom-btn:active {
+        background: #2E6DA4;
+        color: #FAF9F6;
+        box-shadow: 0 2px 8px rgba(46,109,164,0.12);
+        transform: scale(0.98);
+    }
+</style>
+<div class="feedback-card">
+    <h1 class="feedback-header">Policy Feedback</h1>
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    <div class="alert alert-info">
+                            {% for category, message in messages %}
+                                    <p>{{ message }}</p>
+                            {% endfor %}
+                    </div>
+            {% endif %}
+    {% endwith %}
+    <form method="POST" action="">
+        {{ feedback_form.hidden_tag() }}
+        <div class="mb-3">
+            {{ feedback_form.policy_id.label(class_='form-label') }}
+            {{ feedback_form.policy_id(class_='form-control', id='policy-dropdown') }}
+        </div>
+        <div class="mb-3">
+            <label for="policy_description" class="form-label">Policy Description</label>
+            <textarea id="policy_description" class="form-control" readonly rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            {{ feedback_form.feedback_field.label(class_='form-label') }}
+            {{ feedback_form.feedback_field(class_='form-control', id='feedback-field') }}
+        </div>
+        <div class="mb-3">
+            {{ feedback_form.rating_field.label(class_='form-label') }}
+            {{ feedback_form.rating_field(class_='form-control', id='rating-field') }}
+        </div>
+        <button type="submit" class="custom-btn" id="submit-feedback">Submit Feedback</button>
+    </form>
+</div>
+<script>
+        // Policy descriptions dictionary passed from Flask backend
+        const policyDescriptions = JSON.parse('{{ feedback_form.policy_descriptions|tojson}}');
+
+        // Get references to the dropdown and description field
+        const policySelect = document.getElementById("policy-dropdown");
+        const descriptionField = document.getElementById("policy_description");
+
+        // Update description when a new policy is selected
+        policySelect.addEventListener("change", function () {
+                const selectedPolicyId = parseInt(this.value);
+                descriptionField.value = policyDescriptions[selectedPolicyId] || "No description available.";
+        });
+
+        // Trigger change event on page load to populate initial value
+        policySelect.dispatchEvent(new Event("change"));
+</script>
+{% endblock %}

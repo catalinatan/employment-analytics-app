@@ -1,0 +1,400 @@
+{% extends "base.html" %}
+
+{% block title %}Datatable{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload</title>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
+
+    <!-- jQuery Context Menu -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.9.2/jquery.contextMenu.min.js"></script>
+</head>
+<body>
+        <style>
+            body {
+                background: #fff !important;
+                font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            }
+            .datatable-card {
+                background: #fff;
+                border-radius: 18px;
+                box-shadow: 0 4px 24px rgba(66,146,195,0.10);
+                padding: 2.5rem 2rem 2rem 2rem;
+                margin: 2rem auto 2rem auto;
+                max-width: 1200px;
+            }
+            .datatable-title {
+                color: #2E6DA4;
+                font-weight: 800;
+                margin-bottom: 0.5rem;
+                letter-spacing: 0.5px;
+            }
+            .datatable-desc {
+                color: #357AB7;
+                font-size: 1.08rem;
+                margin-bottom: 1.5rem;
+            }
+            .custom-btn {
+                background: #4292C3;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                font-weight: 600;
+                padding: 10px 26px;
+                font-size: 1.05rem;
+                box-shadow: 0 2px 8px rgba(66,146,195,0.10);
+                transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.12s;
+            }
+            .custom-btn:hover {
+                background: #357AB7;
+                color: #FAF9F6;
+                box-shadow: 0 6px 18px rgba(53,122,183,0.16);
+                transform: translateY(-2px) scale(1.03);
+            }
+            .custom-btn:active {
+                background: #2E6DA4;
+                color: #FAF9F6;
+                box-shadow: 0 2px 8px rgba(46,109,164,0.12);
+                transform: scale(0.98);
+            }
+            .export-buttons .btn-success {
+                background: #4292C3 !important;
+                border: none;
+                color: #fff !important;
+                border-radius: 8px;
+                font-weight: 600;
+                margin-right: 10px;
+                transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.12s;
+            }
+            .export-buttons .btn-success:hover {
+                background: #357AB7 !important;
+                color: #FAF9F6 !important;
+                box-shadow: 0 6px 18px rgba(53,122,183,0.16);
+                transform: translateY(-2px) scale(1.03);
+            }
+            .dataTables_wrapper .dataTables_filter input {
+                border-radius: 6px;
+                border: 1px solid #4292C3;
+                padding: 4px 10px;
+                margin-left: 0.5em;
+            }
+            .dataTables_wrapper .dataTables_length select {
+                border-radius: 6px;
+                border: 1px solid #4292C3;
+                padding: 4px 10px;
+            }
+            #employment-data {
+                background: #fff;
+                border-radius: 12px;
+                box-shadow: 0 2px 12px rgba(66,146,195,0.08);
+                margin-bottom: 2rem;
+            }
+                    #employment-data th {
+                        background: #4292C3;
+                        color: #fff;
+                        font-weight: 700;
+                        font-size: 1.01rem;
+                        border-top-left-radius: 8px;
+                        border-top-right-radius: 8px;
+                        padding-top: 6px !important;
+                        padding-bottom: 6px !important;
+                        line-height: 1.2;
+                    }
+                    #employment-data td {
+                        font-size: 1.01rem;
+                        padding-top: 6px !important;
+                        padding-bottom: 6px !important;
+                    }
+                    .datatable-table-wrapper {
+                        width: 100%;
+                        overflow-x: auto;
+                        margin-bottom: 2rem;
+                    }
+                    .datatable-card {
+                        max-width: 100vw;
+                        overflow-x: hidden;
+                    }
+            @media (max-width: 900px) {
+                .datatable-card { padding: 1.2rem 0.5rem; }
+            }
+        </style>
+        <div class="datatable-card">
+            <h1 class="datatable-title">Upload Excel/CSV file to update Employment Data on Database</h1>
+            <p class="datatable-desc">Headers must be exact: Region, Year, Gender, Occupation Type, Percentage Employed (Relative to Total Employment in the Year), Margin of Error (%), Latitude, Longitude </p>
+            <form method='POST' enctype='multipart/form-data' style="margin-bottom: 1.5rem;">
+                    {{ form.hidden_tag() }}
+                    {{ form.file() }}
+                    {{ form.submit(class_='custom-btn') }}
+            </form>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                            <ul>
+                                    {% for category, message in messages %}
+                                            <li class="{{ category }}">{{ message }}</li>
+                                    {% endfor %}
+                            </ul>
+                    {% endif %}
+            {% endwith %}
+            <h2 style="color:#357AB7; font-weight:700; margin-top:2.5rem;">Employment Data</h2>
+            <div style="display: flex; align-items: center; margin-bottom: 20px;">
+                    <button id="add-row" class="custom-btn" onclick="addNewRow()">Add Row</button>
+                    <p style="margin-left: 10px;">To edit a new entry, please edit all input fields first before modifying the Employment Percentage</p>
+            </div>
+    <!-- References (Data Table Documentation): -->
+    <!-- https://datatables.net/manual/data/ -->
+    <!-- https://datatables.net/examples/api/multi_filter_select.html -->
+    <script>
+        document
+        var dataSet = JSON.parse('{{ employment_data|tojson }}');
+        var table; 
+
+        
+        // Inspired by https://datatables.net/forums/discussion/44357/insert-new-row-at-top
+        $(document).ready(function () {
+            // Initialize DataTable
+            table = $('#employment-data').DataTable({
+                data: dataSet,
+                columns: [
+                    { title: 'Region Name' },
+                    { title: 'Year' },
+                    { title: 'Gender' },
+                    { title: 'Occupation Type' },
+                    { title: 'Employment Percentage' },
+                    { title: 'Margin of Error Percentage' },
+                    { title: 'Longitude' },
+                    { title: 'Latitude' }
+                ],
+                order: [[4, 'asc']],
+                columnDefs: [
+                    {
+                        targets: 4, // Target the "Employment Percentage" column
+                        type: 'num', // Ensure numeric sorting
+                    }
+                ],
+                initComplete: function () {
+                    this.api()
+                        .columns()
+                        .every(function () {
+                            let column = this;
+        
+                            // Create select element for filtering
+                            let select = document.createElement('select');
+                            select.add(new Option('')); // Empty option for "All"
+                            $(column.footer()).empty().append(select);
+        
+                            // Apply listener for user change in value
+                            select.addEventListener('change', function () {
+                                column.search(select.value).draw();
+                            });
+        
+                            // Populate dropdown with unique column values
+                            column.data()
+                                .unique()
+                                .sort()
+                                .each(function (d, j) {
+                                    select.add(new Option(d));
+                                });
+                        });
+                }
+            });
+
+            // Context Menu
+            $.contextMenu({
+                selector: ".dataTable td",
+                callback: function (key, options) {
+                    var $cell = $(this);
+                    var $row = $cell.closest("tr");
+                    const rowData = table.row($row).data();
+
+                    switch (key) {
+                        case "removerow":
+                            if (confirm("Delete this row?")) {
+                                $.ajax({
+                                    url: '/datatable/delete',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({
+                                        RegionName: rowData[0],
+                                        Year: rowData[1],
+                                        Gender: rowData[2],
+                                        OccupationType: rowData[3],
+                                        EmploymentPercentage: rowData[4],
+                                        MarginofErrorPercentage: rowData[5],
+                                        Longitude: rowData[6],
+                                        Latitude: rowData[7]
+                                    }),
+                                    success: function (response) {
+                                        // Remove the row from the DataTable on success
+                                        table.row($row).remove().draw();
+                                        alert("Row deleted successfully!");
+                                    },
+                                    error: function (xhr) {
+                                        console.error('Error:', xhr.responseText);
+                                        alert('Failed to delete row.');
+                                    }
+                                });
+                            }
+                            break;
+                    }
+                },
+                items: {
+                    "removerow": { name: "Remove", icon: "delete" },
+                }
+            }); 
+        
+            $('#add-row').on('click', function () {
+                // Generate a timestamp for differentiation
+                const timestamp = new Date().toISOString(); // ISO format: "YYYY-MM-DDTHH:mm:ss.sssZ"
+
+                const newRowData = {
+                    RegionName: `New Region ${timestamp}`,
+                    Year: 2025,
+                    Gender: 'Female',
+                    OccupationType: 'New Occupation',
+                    EmploymentPercentage: 0.00,
+                    MarginofErrorPercentage: 0.00,
+                    Longitude: 0.00,
+                    Latitude: 0.00
+                };
+
+                $.ajax({
+                    url: '/datatable/add',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(newRowData),
+                    success: function (response) {
+
+                    window.location.href = response.redirect_url;
+                    },
+                    error: function (xhr) {
+                        console.error('Error:', xhr.responseText);
+                        alert('Failed to add row.');
+                    }
+                });
+            });
+
+            const columnMapping = {
+                0: 'RegionName',
+                1: 'Year',
+                2: 'Gender',
+                3: 'OccupationType',
+                4: 'EmploymentPercentage',
+                5: 'MarginofErrorPercentage',
+                6: 'Longitude',
+                7: 'Latitude'
+            };
+
+            // Double-Click Editing
+            $('#employment-data tbody').on('dblclick', 'td', function () {
+                const cell = table.cell(this);
+                const originalValue = cell.data();
+                const rowIndex = cell.index().row;
+                const columnIndex = cell.index().column;
+                const rowData = table.row(rowIndex).data(); // Retrieve the entire row data
+                const editColumnName = columnMapping[columnIndex];
+
+                // Replace cell content with input field
+                $(this).html(`<input type="text" value="${originalValue}" class="edit-input">`);
+                const $input = $(this).find('input').focus();
+
+                // Save on blur or Enter key
+                $input.on('blur keydown', function (e) {
+                    if (e.type === 'blur' || (e.type === 'keydown' && e.which === 13)) {
+                        const newValue = $input.val().trim();
+
+                        // Dynamically build the updated row data
+                        const editRowData = { ...rowData, [editColumnName]: newValue };
+
+                        // Send updated row data to the server
+                        $.ajax({
+                            url: '/datatable/edit',
+                            type: 'PATCH',
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                lookupFields: {
+                                    RegionName: rowData.RegionName,
+                                    Year: rowData.Year,
+                                    Gender: rowData.Gender,
+                                    OccupationType: rowData.OccupationType
+                                },
+                                updatedRowData: editRowData
+                            }),
+                            success: function (response) {
+                                if (response.status === 'success') {
+                                    window.location.href = response.redirect_url; // Redirect dynamically
+                                } else {
+                                    alert('Failed to update');
+                                    cell.data(originalValue).draw(); // Revert on error
+                                }
+                            },
+                            error: function () {
+                                alert('Failed to update');
+                                cell.data(originalValue).draw(); // Revert on error
+                            }
+                        });
+                    }
+                });
+
+                // Cancel on Escape key
+                $input.on('keydown', function (e) {
+                    if (e.which === 27) { // Escape key
+                        cell.data(originalValue).draw();
+                        $input.blur();
+                    }
+                });
+            });
+        });
+    </script> 
+     
+        <div class="datatable-table-wrapper">
+            <table id="employment-data" class="display" style="width:100%; min-width:900px;">
+        <tfoot>
+            <tr>
+                <th>Region Name</th>
+                <th>Year</th>
+                <th>Gender</th>
+                <th>Occupation Type</th>
+                <th>Employment Percentage</th>
+                <th>Margin of Error Percentage</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+            </tr>
+        </tfoot>
+        <thead>
+            <tr>
+                <th>Region Name</th>
+                <th>Year</th>
+                <th>Gender</th>
+                <th>Occupation Type</th>
+                <th>Employment Percentage</th>
+                <th>Margin of Error Percentage</th>
+                <th>Longitude</th>
+                <th>Latitude</th>
+            </tr>
+        </thead>
+            </table>
+        </div>
+
+        <div class="export-buttons mb-4">
+                <a href="{{ url_for('starter.datatable') }}?export=csv" class="btn btn-success">
+                    <i class="bi bi-file-earmark-spreadsheet"></i> Export CSV
+                </a>
+                <a href="{{ url_for('starter.datatable') }}?export=xlsx" class="btn btn-success">
+                    <i class="bi bi-file-earmark-excel"></i> Export Excel
+                </a>
+        </div>
+        </div>
+</body>
+</html>
+{% endblock %}
