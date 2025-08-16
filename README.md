@@ -1,5 +1,4 @@
-[![Open in Codespaces](https://classroom.github.com/assets/launch-codespace-2972f46106e565e64193e422d61a12cf1da4916b45550586e14ef0a7c637dd04.svg)](https://classroom.github.com/open-in-codespaces?assignment_repo_id=18592104)
-# COMP0035 Coursework 02 Starter Repository
+# Employment Analytics App
 
 ## Project Setup Instructions
 
@@ -10,27 +9,34 @@ Clone the project in your preferred IDE (e.g., VS Code, PyCharm) from GitHub.
 The coursework code has the following structure:
 
 ```text
-my_project/
-├── .gitignore             # Git ignore file
-├── README.md              # Project description and instructions
-├── requirements.txt       # List of dependencies
-├── pyproject.toml         # Installation and package details
-├── src/                   # Main code directory
-│   ├── employment_flask_app/  # App package directory
-│      ├── __init__.py     # Code to configure the Flask app
-│      ├── static/         # Static files (e.g., CSS, JS)
-│      ├── templates/      # Jinja page templates saved as .html files
-│          ├── index.html  # Home page template
-│      ├── routes.py       # Route definitions for the app
-│      ├── run.py          # Entry point for running the Flask app
-│   ├── dash_app/          # Dash app integration
-│      ├── init_dash_app.py  # Dash app initialization
-│      ├── layout.py       # Dash app layout
-│      ├── callbacks.py    # Dash app callbacks
-├── tests/                 # Test suite
-│   ├── conftest.py        # Test fixtures
-│   ├── test_app.py        # Example test cases
-└── ...                    # Additional modules for your tests
+.
+├── .gitignore                   # Git ignore file
+├── README.md                    # Project description and instructions
+├── requirements.txt             # List of dependencies
+├── pyproject.toml               # Installation and package details
+├── src/                         # Main code directory
+│   ├── employment_flask_app/    # App package directory
+│   │   ├── __init__.py          # Code to configure the Flask app
+│   │   ├── db.py                # Database utilities
+│   │   ├── models.py            # Database models
+│   │   └── ...                  # Other app modules
+│   └── instance/                # SQLite database storage
+├── tests/                       # Test suite
+│   ├── conftest.py              # Test fixtures
+│   ├── test_add_row.py
+│   ├── test_datatable.py
+│   ├── test_delete_row.py
+│   ├── test_edit_cell.py
+│   ├── test_home_page.py
+│   ├── test_import_export.py
+│   ├── test_pol_feedback.py
+│   ├── test_predict_trend.py
+│   └── test_rec_policy.py
+├── .github/
+│   └── workflows/
+│       └── python-app.yml       # GitHub Actions workflow for CI
+└── .vscode/
+    └── settings.json            # VS Code settings
 ```
 
 ### 3. Create and Activate a Virtual Environment
@@ -55,12 +61,6 @@ Run the tests in the `tests/` directory to ensure the setup is correct:
 ```bash
 pytest
 ```
-
-Note on pytest:
-If you encounter a problem with installing the 'markdown' module, 
-simply deactivate your virtual environment and repeat steps 3-4 
-as the markdown module has been included in the requirements.txt 
-file.
 
 ### 6. Run the Flask App
 Run the Flask app using the following command:
@@ -88,14 +88,9 @@ Alternatively, you can run the app using `run.py`:
 python src/employment_flask_app/run.py
 ```
 
-### 7. Rename the App
-Rename the app from `employment_flask_app` to your desired name. Use your IDE's refactor feature to ensure all imports and references are updated.
-
----
 
 ## Additional Notes
 - The project integrates a Dash app within the Flask app. The Dash app is accessible at `/dashboard/`.
 - Ensure the `instance` folder exists for SQLite database storage.
 - Modify the `SECRET_KEY` in `__init__.py` for production use.
 
-Happy coding!
