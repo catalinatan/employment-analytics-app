@@ -12,7 +12,7 @@ from functools import wraps
 from flask import (
     request, session, render_template
 )
-
+import os
 
 def password_protected(required_password):
     """
@@ -252,7 +252,7 @@ def predict_employment_data(
     end_year = starting_year + no_of_years - 1
 
     # Initialize the AI client with the API key
-    client = genai.Client(api_key="AIzaSyAg3clzL5xTIDHqbOSzLD2FlLLg0LMsllw")
+    client = genai.Client(os.environ.get('GENAI_API_KEY'))
     # Specify the AI model to use for predictions
     model_id = "gemini-2.0-flash"
 
