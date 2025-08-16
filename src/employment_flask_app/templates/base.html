@@ -62,9 +62,38 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('starter.policy_feedback') }}">Policy Feedback</a>
         </li>
+
+        <!-- Dataset Attribution Nav Item -->
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#datasetAttributionModal">Dataset Attribution</a>
+        </li>
       </ul>
     </div>
   </nav>
+
+  <!-- Dataset Attribution Modal -->
+  <div class="modal fade" id="datasetAttributionModal" tabindex="-1" aria-labelledby="datasetAttributionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header" style="background:#4292C3; color:white; border-top-left-radius: 0.5rem; border-top-right-radius: 0.5rem;">
+          <h5 class="modal-title" id="datasetAttributionModalLabel">Dataset Attribution</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            The data used in this analysis is sourced from the Greater London Authority, under the Open Government Licence v2.0.
+          </p>
+          <p>
+            Please refer to
+            <a href="https://data.london.gov.uk/dataset/employment-occupation-type-and-gender-borough" target="_blank" style="color:#4292C3; text-decoration:underline; font-weight:600;">
+              this website
+            </a>
+            for more information.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Page content -->
   <div class="container mt-5">
