@@ -510,15 +510,11 @@ high_overall_disp_region = html.Div(
 high_overall_disp_perc = html.Div(
     [
         html.I(
-            className=f"bi {
-                get_metric_style(float(highest_overall_disparity_percentage)
-                                 )['icon']} me-2"
+            className=f"bi {get_metric_style(float(highest_overall_disparity_percentage))['icon']} me-2"
         ),
         html.Span(
             f"{highest_overall_disparity_percentage}%",
-            className=f"h4 text-{
-                get_metric_style(float(highest_overall_disparity_percentage)
-                                 )['color']}",
+            className=f"h4 text-{get_metric_style(float(highest_overall_disparity_percentage))['color']}",
         ),
     ],
     className="d-flex align-items-center mb-2",
