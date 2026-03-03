@@ -94,7 +94,7 @@ def test_selenium_workflow(
     # Fill out feedback field
     feedback_field = chrome_driver.find_element(By.XPATH,
                                                 '//*[@id="feedback-field"]')
-    feedback_field.click()
+    chrome_driver.execute_script("arguments[0].click();", feedback_field)
     feedback_field.send_keys(
         "This policy could be improved by considering D and C."
     )
@@ -102,7 +102,7 @@ def test_selenium_workflow(
     # Fill out rating field
     rating_field = chrome_driver.find_element(By.XPATH,
                                               '//*[@id="rating-field"]')
-    rating_field.click()
+    chrome_driver.execute_script("arguments[0].click();", rating_field)
     rating_field.send_keys("1")
 
     # Submit the form

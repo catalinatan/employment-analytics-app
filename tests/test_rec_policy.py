@@ -73,18 +73,18 @@ def test_selenium_workflow(
     # ARRANGE: Fill out the form fields
     employment_disparity_field = wait_for_clickable_element(
         chrome_driver, (By.ID, "employment-disparity-field"))
-    employment_disparity_field.click()
+    chrome_driver.execute_script("arguments[0].click();", employment_disparity_field)
     employment_disparity_field.send_keys(
         "Scotland, 2023, Gender Disparity, 5.5"
     )
 
     policy_name_field = chrome_driver.find_element(By.ID, "policy-name-field")
-    policy_name_field.click()
+    chrome_driver.execute_script("arguments[0].click();", policy_name_field)
     policy_name_field.send_keys("Selenium Policy")
 
     policy_description_field = chrome_driver.find_element(
         By.ID, "policy-description-field")
-    policy_description_field.click()
+    chrome_driver.execute_script("arguments[0].click();", policy_description_field)
     policy_description_field.send_keys(
         "This policy was created using Selenium for testing purposes.")
 
