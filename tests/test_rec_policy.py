@@ -1,6 +1,5 @@
 from employment_flask_app import create_app
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import ElementClickInterceptedException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from flask_testing import TestCase
@@ -66,7 +65,10 @@ def test_selenium_workflow(
     password_input = wait_for_visible_element(chrome_driver,
                                               (By.ID, "password-input"))
     password_input.send_keys("policyrecommendation")
-    chrome_driver.find_element(By.ID, "submit-password").click()
+    chrome_driver.execute_script(
+        "arguments[0].click();",
+        chrome_driver.find_element(By.ID, "submit-password")
+    )
 
     # ARRANGE: Fill out the form fields
     employment_disparity_field = wait_for_clickable_element(
@@ -87,12 +89,10 @@ def test_selenium_workflow(
         "This policy was created using Selenium for testing purposes.")
 
     # ACT: Submit the form
-    submit_button = chrome_driver.find_element(By.ID, "submit-recommendation")
-    chrome_driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
-    try:
-        submit_button.click()
-    except ElementClickInterceptedException:
-        chrome_driver.execute_script("arguments[0].click();", submit_button)
+    chrome_driver.execute_script(
+        "arguments[0].click();",
+        chrome_driver.find_element(By.ID, "submit-recommendation")
+    )
 
     # ASSERT: Verify the success message and policy presence
     WebDriverWait(chrome_driver, 10).until(

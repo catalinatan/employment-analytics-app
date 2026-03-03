@@ -6,7 +6,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from flask_testing import TestCase
 import pandas as pd
 from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import ElementClickInterceptedException
 
 
 class TestUnauthenticatedAccess(TestCase):
@@ -75,7 +74,10 @@ def test_selenium_workflow(
     # Enter password and submit
     wait_for_visible_element(chrome_driver, (By.ID, "password-input"))\
         .send_keys("policyfeedback")
-    chrome_driver.find_element(By.ID, "submit-password").click()
+    chrome_driver.execute_script(
+        "arguments[0].click();",
+        chrome_driver.find_element(By.ID, "submit-password")
+    )
 
     # Wait for policy dropdown to load and select a policy
     policy_dropdown = wait_for_clickable_element(chrome_driver,
@@ -104,12 +106,10 @@ def test_selenium_workflow(
     rating_field.send_keys("1")
 
     # Submit the form
-    submit_button = chrome_driver.find_element(By.ID, "submit-feedback")
-    chrome_driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
-    try:
-        submit_button.click()
-    except ElementClickInterceptedException:
-        chrome_driver.execute_script("arguments[0].click();", submit_button)
+    chrome_driver.execute_script(
+        "arguments[0].click();",
+        chrome_driver.find_element(By.ID, "submit-feedback")
+    )
 
     # ASSERT: Verify feedback confirmation message
     WebDriverWait(chrome_driver, 10).until(
