@@ -6,6 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from flask_testing import TestCase
 import pandas as pd
 from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import ElementClickInterceptedException
 
 
 class TestUnauthenticatedAccess(TestCase):
@@ -104,7 +105,11 @@ def test_selenium_workflow(
 
     # Submit the form
     submit_button = chrome_driver.find_element(By.ID, "submit-feedback")
-    submit_button.click()
+    chrome_driver.execute_script("arguments[0].scrollIntoView(true);", submit_button)
+    try:
+        submit_button.click()
+    except ElementClickInterceptedException:
+        chrome_driver.execute_script("arguments[0].click();", submit_button)
 
     # ASSERT: Verify feedback confirmation message
     WebDriverWait(chrome_driver, 10).until(

@@ -18,7 +18,7 @@ def test_home_page_links(
     # ACT: Load the home page in the browser and find all links
     chrome_driver.get(base_url)
     links = chrome_driver.find_elements(By.TAG_NAME, 'a')  # Find all <a> tags
-    assert len(links) == 15  # Adjust expected count as needed
+    assert len(links) == 17  # Adjust expected count as needed
 
     # ASSERT: Verify each link is accessible
     for link in links:

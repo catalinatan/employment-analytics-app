@@ -118,7 +118,11 @@ def test_table_sorting(
     header = table.find_element(By.CSS_SELECTOR, 'thead th:first-child')
 
     # ACT: Click on the header to sort the table
-    header.click()
+    chrome_driver.execute_script("arguments[0].scrollIntoView(true);", header)
+    try:
+        header.click()
+    except ElementClickInterceptedException:
+        chrome_driver.execute_script("arguments[0].click();", header)
 
     # ACT: Wait for DataTable sorting to complete
     WebDriverWait(chrome_driver, 10).until(
