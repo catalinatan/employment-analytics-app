@@ -583,17 +583,11 @@ high_m_year_disp_region = html.Div(
 high_m_year_disp_perc = html.Div(
     [
         html.I(
-            className=(
-                f"bi {get_metric_style(float(
-                    highest_m_year_disparity_percentage))['icon']} me-2"
-            )
+            className=f"bi {get_metric_style(float(highest_m_year_disparity_percentage))['icon']} me-2"
         ),
         html.Span(
             f"{highest_m_year_disparity_percentage}%",
-            className=(
-                f"h4 text-{get_metric_style(float(
-                    highest_m_year_disparity_percentage))['color']}"
-            ),
+            className=f"h4 text-{get_metric_style(float(highest_m_year_disparity_percentage))['color']}",
         ),
     ],
     className="d-flex align-items-center",
@@ -662,15 +656,11 @@ high_f_year_disp_region = html.Div(
 high_f_year_disp_perc = html.Div(
     [
         html.I(
-            className=(
-                f"bi {get_metric_style(float(
-                    highest_f_year_disparity_percentage))['icon']} me-2"
-            )
+            className=f"bi {get_metric_style(float(highest_f_year_disparity_percentage))['icon']} me-2"
         ),
         html.Span(
             f"{highest_f_year_disparity_percentage}%",
-            className=f"h4 text-{get_metric_style(float(
-                highest_f_year_disparity_percentage))['color']}",
+            className=f"h4 text-{get_metric_style(float(highest_f_year_disparity_percentage))['color']}",
         ),
     ],
     className="d-flex align-items-center",
