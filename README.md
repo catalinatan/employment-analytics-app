@@ -1,6 +1,6 @@
 # Employment Analytics App
 
-![CI](https://github.com/catalina-angelia/employment-analytics-app/actions/workflows/python-app.yml/badge.svg)
+![CI](https://github.com/catalinatan/employment-analytics-app/actions/workflows/python-app.yml/badge.svg?branch=main)
 ![Python](https://img.shields.io/badge/python-3.10-blue)
 ![Flask](https://img.shields.io/badge/flask-3.x-lightgrey)
 ![Deployed on Render](https://img.shields.io/badge/deployed-Render-46E3B7)
