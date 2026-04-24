@@ -7,6 +7,8 @@
 
 > **Live demo:** [employment-analytics-app.onrender.com](https://employment-analytics-app.onrender.com)
 
+> **Prediction API key caveat:** Gemini usage is quota-limited on the demo. If prediction requests are unavailable due to limits, run the app locally with your own `GENAI_API_KEY`.
+
 ---
 
 ## What This Project Does
