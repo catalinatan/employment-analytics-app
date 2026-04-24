@@ -252,7 +252,7 @@ def predict_employment_data(
     end_year = starting_year + no_of_years - 1
 
     # Initialize the AI client with the API key
-    client = genai.Client(os.environ.get('GENAI_API_KEY'))
+    client = genai.Client(api_key=os.environ.get('GENAI_API_KEY'))
     # Specify the AI model to use for predictions
     model_id = "gemini-2.0-flash"
 

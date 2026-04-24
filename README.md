@@ -86,16 +86,12 @@ flowchart TD
 ---
 
 ## Screenshots
-
-> **Suggested screenshots to add here:**
 >
 > 1. **Dashboard (`/dashboard/`)** — show the Dash layout with the interactive Plotly charts populated with real data, filters active (e.g. filtered by one region and occupation type). This is the most visually impressive view.
 >
 > 2. **Data Table (`/datatable`)** — show the table with data loaded, the import/export buttons visible, and ideally the inline edit or add-row modal open. Demonstrates the CRUD interface.
 >
 > 3. **Trend Prediction (`/predict_employment_trends`)** — show the form submitted with results: the Gemini-generated markdown analysis alongside the stacked bar chart. Demonstrates the AI integration end-to-end.
-
-_Place screenshots in a `docs/screenshots/` folder and reference them here:_
 
 ```md
 ![Dashboard](docs/screenshots/dashboard.png)
