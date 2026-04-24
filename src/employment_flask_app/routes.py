@@ -5,7 +5,8 @@ from flask import (
     url_for,
     flash,
     request,
-    jsonify
+    jsonify,
+    session
 )
 from employment_flask_app.forms.upload_file import UploadFileForm
 from employment_flask_app.forms.policy_recommendation import (
@@ -331,15 +332,43 @@ def predict_employment_trends():
         occupation_type = form.occupation_type.data
         additional_info = form.additional_info.data
 
+        # If the user supplied their own Gemini key on this submission, stash
+        # it in the session so they don't need to re-enter it each time.
+        submitted_key = (form.api_key.data or '').strip()
+        if submitted_key:
+            session['genai_api_key'] = submitted_key
+        user_api_key = session.get('genai_api_key')
+
         # Predict employment data with or without additional information
-        prediction_result, forecast_data, starting_year, end_year = (
-            predict_employment_data(
-                region,
-                no_of_years,
-                occupation_type,
-                additional_info if additional_info else None
+        try:
+            prediction_result, forecast_data, starting_year, end_year = (
+                predict_employment_data(
+                    region,
+                    no_of_years,
+                    occupation_type,
+                    additional_info if additional_info else None,
+                    api_key=user_api_key
+                )
             )
-        )
+        except Exception as e:
+            # Most commonly a genai quota (429) or auth error. Surface the
+            # message instead of 500-ing so the user can paste a different key.
+            # Drop the session-stored key so a subsequent submission without a
+            # new key falls back to the server default rather than the bad one.
+            session.pop('genai_api_key', None)
+            flash(
+                f"Prediction failed: {str(e)[:300]}. "
+                "If this is a quota error, paste your own Gemini API key "
+                "below and try again.",
+                "danger"
+            )
+            return render_template(
+                'data_prediction.html',
+                form=form,
+                prediction_result=None,
+                graph_html=None,
+                forecast_data=None
+            )
 
         # If forecast data is not empty, create a bar chart
         graph_html = ""

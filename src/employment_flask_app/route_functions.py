@@ -190,7 +190,8 @@ def predict_employment_data(
     region,
     no_of_years,
     occupation_type,
-    additional_info=None
+    additional_info=None,
+    api_key=None
         ):
     """Predicts employment data trends for a specified region and occupation
     type.
@@ -251,8 +252,10 @@ def predict_employment_data(
     # Calculate the ending year for predictions
     end_year = starting_year + no_of_years - 1
 
-    # Initialize the AI client with the API key
-    client = genai.Client(api_key=os.environ.get('GENAI_API_KEY'))
+    # Prefer a user-supplied key (BYOK) so visitors can spend their own quota;
+    # fall back to the server-configured key for local dev and demos.
+    resolved_key = api_key or os.environ.get('GENAI_API_KEY')
+    client = genai.Client(api_key=resolved_key)
     # Specify the AI model to use for predictions
     model_id = "gemini-2.0-flash"
 

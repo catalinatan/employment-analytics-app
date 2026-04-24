@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, StringField, SubmitField, IntegerField
-from wtforms.validators import InputRequired, NumberRange
+from wtforms import (
+    SelectField, StringField, SubmitField, IntegerField, PasswordField
+)
+from wtforms.validators import InputRequired, NumberRange, Optional
 
 
 # Defining a form class for predicting employment data
@@ -59,6 +61,18 @@ class DataPredictForm(FlaskForm):
         'Additional Information',  # Label for the field
         # HTML attributes for the input field
         render_kw={'size': 150, 'maxlength': 600}
+    )
+
+    # Optional user-supplied Gemini API key (BYOK). Falls back to the
+    # server-configured GENAI_API_KEY when left blank.
+    api_key = PasswordField(
+        'Gemini API Key (optional)',
+        validators=[Optional()],
+        render_kw={
+            'autocomplete': 'off',
+            'placeholder': 'Paste your own key to use your quota',
+            'maxlength': 200,
+        },
     )
 
     # Submit button for the form

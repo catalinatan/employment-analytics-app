@@ -135,6 +135,17 @@
                     {{ form.additional_info.label(class_='form-label') }}
                     {{ form.additional_info(class_='form-control') }}
                 </div>
+                <div class="mb-3">
+                    {{ form.api_key.label(class_='form-label') }}
+                    {{ form.api_key(class_='form-control') }}
+                    <small class="form-text text-muted">
+                        Leave blank to use the demo key. If the demo quota is
+                        exhausted, get a free key at
+                        <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>
+                        and paste it here &mdash; it is kept only in your
+                        session and never stored.
+                    </small>
+                </div>
                 <button type="submit" class="custom-btn">{{ form.submit.label }}</button>
             </div>
         </div>

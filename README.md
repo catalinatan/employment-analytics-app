@@ -93,11 +93,8 @@ flowchart TD
 >
 > 3. **Trend Prediction (`/predict_employment_trends`)** — show the form submitted with results: the Gemini-generated markdown analysis alongside the stacked bar chart. Demonstrates the AI integration end-to-end.
 
-```md
 ![Dashboard](docs/screenshots/dashboard.png)
 ![Data Table](docs/screenshots/datatable.png)
-![AI Prediction](docs/screenshots/prediction.png)
-```
 
 ---
 
