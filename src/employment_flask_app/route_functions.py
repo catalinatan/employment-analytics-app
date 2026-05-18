@@ -90,47 +90,53 @@ def insert_employment_data(df, db, EmploymentData, msg=None):
     Notes
     -----
     - Rounds numerical values to specified precision before insertion.
+    - Uses one bulk insert transaction instead of committing each row.
     - Handles duplicate data gracefully by rolling back the transaction."""
-    # Iterate through each row in the DataFrame
-    for index, row in df.iterrows():
-        # Create an EmploymentData object for each row with rounded values
-        employment_data = EmploymentData(
-            RegionName=row['Region'],
-            Year=row['Year'],
-            Gender=row['Gender'],
-            OccupationType=row['Occupation Type'],
-            EmploymentPercentage=round(
-                row[
-                    (
-                        'Percentage Employed '
-                        '(Relative to Total Employment in the Year)'
-                    )
-                    ], 2
-                ),  # Round employment percentage to 2 decimal places
-            # Round margin of error to 2 decimal places
-            MarginofErrorPercentage=round(row['Margin of Error (%)'], 2),
-            # Round longitude to 6 decimal places
-            Longitude=round(row['Longitude'], 6),
-            # Round latitude to 6 decimal places
-            Latitude=round(row['Latitude'], 6)
-        )
+    prepared_df = df.rename(
+        columns={
+            'Region': 'RegionName',
+            'Occupation Type': 'OccupationType',
+            (
+                'Percentage Employed '
+                '(Relative to Total Employment in the Year)'
+            ): 'EmploymentPercentage',
+            'Margin of Error (%)': 'MarginofErrorPercentage'
+        }
+    )[
+        [
+            'RegionName',
+            'Year',
+            'Gender',
+            'OccupationType',
+            'EmploymentPercentage',
+            'MarginofErrorPercentage',
+            'Longitude',
+            'Latitude'
+        ]
+    ].copy()
 
-        try:
-            # Add the employment data to the database session
-            db.session.add(employment_data)
-            # Commit the transaction to save the data
-            db.session.commit()
-            # Display a success message if a custom message is provided
-            if msg:
-                flash("Data uploaded successfully", "success")
-        except IntegrityError:
-            # Rollback the transaction in case of a database integrity error
-            db.session.rollback()
-            # Display an error message indicating duplicate data
-            if msg:
-                flash("Data already exists in the database.", "danger")
-                # Redirect to the error page
-                return redirect(url_for('starter.error'))
+    prepared_df['EmploymentPercentage'] = (
+        prepared_df['EmploymentPercentage'].round(2)
+    )
+    prepared_df['MarginofErrorPercentage'] = (
+        prepared_df['MarginofErrorPercentage'].round(2)
+    )
+    prepared_df['Longitude'] = prepared_df['Longitude'].round(6)
+    prepared_df['Latitude'] = prepared_df['Latitude'].round(6)
+
+    try:
+        db.session.bulk_insert_mappings(
+            EmploymentData,
+            prepared_df.to_dict(orient='records')
+        )
+        db.session.commit()
+        if msg:
+            flash("Data uploaded successfully", "success")
+    except IntegrityError:
+        db.session.rollback()
+        if msg:
+            flash("Data already exists in the database.", "danger")
+            return redirect(url_for('starter.error'))
 
 
 def process_prediction_response(response):
