@@ -295,6 +295,19 @@
                 7: 'Latitude'
             };
 
+            function rowArrayToObject(rowData) {
+                return {
+                    RegionName: rowData[0],
+                    Year: rowData[1],
+                    Gender: rowData[2],
+                    OccupationType: rowData[3],
+                    EmploymentPercentage: rowData[4],
+                    MarginofErrorPercentage: rowData[5],
+                    Longitude: rowData[6],
+                    Latitude: rowData[7]
+                };
+            }
+
             // Double-Click Editing
             $('#employment-data tbody').on('dblclick', 'td', function () {
                 const cell = table.cell(this);
@@ -303,6 +316,7 @@
                 const columnIndex = cell.index().column;
                 const rowData = table.row(rowIndex).data(); // Retrieve the entire row data
                 const editColumnName = columnMapping[columnIndex];
+                const originalRowData = rowArrayToObject(rowData);
 
                 // Replace cell content with input field
                 $(this).html(`<input type="text" value="${originalValue}" class="edit-input">`);
@@ -314,7 +328,7 @@
                         const newValue = $input.val().trim();
 
                         // Dynamically build the updated row data
-                        const editRowData = { ...rowData, [editColumnName]: newValue };
+                        const editRowData = { ...originalRowData, [editColumnName]: newValue };
 
                         // Send updated row data to the server
                         $.ajax({
@@ -323,10 +337,10 @@
                             contentType: 'application/json',
                             data: JSON.stringify({
                                 lookupFields: {
-                                    RegionName: rowData.RegionName,
-                                    Year: rowData.Year,
-                                    Gender: rowData.Gender,
-                                    OccupationType: rowData.OccupationType
+                                    RegionName: originalRowData.RegionName,
+                                    Year: originalRowData.Year,
+                                    Gender: originalRowData.Gender,
+                                    OccupationType: originalRowData.OccupationType
                                 },
                                 updatedRowData: editRowData
                             }),

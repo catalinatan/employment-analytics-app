@@ -26,7 +26,7 @@ def create_app(test_config=None):
 
     # Set default configuration for the app
     app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY'),
+        SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
         SQLALCHEMY_DATABASE_URI=(
             # SQLite database URI
             "sqlite:///" + os.path.join(app.instance_path, "flaskr.sqlite")

@@ -40,11 +40,17 @@ data_path = Path(__file__).parent / 'data' / 'employment_prepared.xlsx'
 ori_df = pd.read_excel(data_path)
 
 
+def ensure_employment_data():
+    """Load the bundled dataset when the employment table is empty."""
+    if not db.session.query(EmploymentData.DataID).first():
+        insert_employment_data(ori_df, db, EmploymentData)
+
+
 @bp.route('/')
 def index():
     # Insert initial employment data into the database from the prepared Excel
     # file
-    insert_employment_data(ori_df, db, EmploymentData)
+    ensure_employment_data()
     # Render the index page with a welcome message
     return render_template('home.html')
 
@@ -70,6 +76,7 @@ def datatable():
                 df = pd.read_csv(file)
             # Insert the uploaded data into the EmploymentData table
             insert_employment_data(df, db, EmploymentData, msg=True)
+    ensure_employment_data()
     # Fetch all employment data from the database and convert it to an array
     # format
     # Handle export requests
