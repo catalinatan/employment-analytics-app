@@ -1,6 +1,9 @@
+from datetime import datetime
 from typing import List
 
-from sqlalchemy import ForeignKey, Integer, String, Float, UniqueConstraint
+from sqlalchemy import (
+    DateTime, ForeignKey, Integer, String, Float, Text, UniqueConstraint
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from employment_flask_app import db
 
@@ -106,4 +109,34 @@ class PolicyFeedback(db.Model):
             "PolicyID": self.PolicyID,
             "PolicyRating": self.PolicyRating,
             "PolicyFeedback": self.PolicyFeedback
+        }
+
+
+class Forecast(db.Model):
+    __tablename__ = "forecasts"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    forecast_id: Mapped[str] = mapped_column(
+        String(64), unique=True, nullable=False
+    )
+    region: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    occupation_type: Mapped[str] = mapped_column(
+        String(128), nullable=False, index=True
+    )
+    summary: Mapped[str] = mapped_column(Text, nullable=False)
+    payload: Mapped[str] = mapped_column(Text, nullable=False)
+    start_year: Mapped[int] = mapped_column(Integer, nullable=False)
+    end_year: Mapped[int] = mapped_column(Integer, nullable=False)
+    generated_at: Mapped[datetime] = mapped_column(
+        DateTime, nullable=False, index=True, default=datetime.utcnow
+    )
+
+    def to_dict(self):
+        return {
+            "forecast_id": self.forecast_id,
+            "region": self.region,
+            "occupation_type": self.occupation_type,
+            "summary": self.summary,
+            "start_year": self.start_year,
+            "end_year": self.end_year,
+            "generated_at": self.generated_at.isoformat() + "Z",
         }
