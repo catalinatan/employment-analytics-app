@@ -53,6 +53,11 @@ def create_app(test_config=None):
     from . import routes
     app.register_blueprint(routes.bp)
 
+    # Register the enterprise JSON API blueprint (used by Power Automate,
+    # Copilot Studio, and any other headless client).
+    from .api import api_bp
+    app.register_blueprint(api_bp, url_prefix='/api/v1')
+
     # Create database tables and initialize the Dash app within the
     # Flask app context
     with app.app_context():

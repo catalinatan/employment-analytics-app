@@ -169,13 +169,39 @@ pip install -r requirements.txt
 
 # 4. Set environment variables
 export SECRET_KEY=your-secret-key
-export GENAI_API_KEY=your-google-genai-key   # Required for AI prediction
+export GENAI_API_KEY=your-google-genai-key         # Required for AI prediction
+export ENTERPRISE_API_KEY=$(python -c 'import secrets;print(secrets.token_urlsafe(32))')
+                                                    # Required for /api/v1 endpoints
 
 # 5. Run the app
 flask --app employment_flask_app run --debug
 ```
 
 Visit [http://127.0.0.1:5000](http://127.0.0.1:5000). The dashboard is at `/dashboard/`.
+
+---
+
+## Enterprise JSON API (`/api/v1`)
+
+A headless JSON surface used by Power Automate flows and Copilot Studio agents. Every non-`/health` endpoint requires an `x-api-key` header matching `ENTERPRISE_API_KEY`.
+
+| Method | Path | Purpose |
+|---|---|---|
+| `GET`  | `/api/v1/health` | Warm-ping (unauthenticated). |
+| `POST` | `/api/v1/trigger-forecast` | Run Gemini forecast, persist it, return summary + anomaly count. |
+| `GET`  | `/api/v1/latest-forecast?region=&occupation_type=` | Return most recent persisted forecast. |
+| `GET`  | `/api/v1/anomalies?region=` | Return z-score outliers (|z|>2.5) in local data. |
+
+Example:
+
+```bash
+curl -X POST https://employment-analytics-app.onrender.com/api/v1/trigger-forecast \
+  -H "x-api-key: $ENTERPRISE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"region":"England","occupation_type":"2: professional occupations","no_of_years":3}'
+```
+
+Errors surface as structured JSON (`400` bad request, `401` unauthorized, `404` not found, `429` upstream quota, `502` upstream failed) instead of HTML — designed for low-code parsers.
 
 ---
 
